@@ -21,22 +21,12 @@ class TestSiteSeeder extends Seeder
             'domain' => 'test.local',
             'is_active' => true,
             'settings' => [
-                'crm' => [
-                    'api_url' => 'https://crm.example.com/api/leads',
-                    'api_key' => 'test_crm_key',
-                    'entry_point' => 'website_form',
-                    'enabled' => true
-                ],
                 'design' => [
                     'primary_color' => '#667eea',
-                    'secondary_color' => '#764ba2',
-                    'button_style' => 'gradient'
+                    'secondary_color' => '#764ba2'
                 ],
-                'notifications' => [
-                    'email' => [
-                        'enabled' => true,
-                        'recipients' => ['manager@test.local']
-                    ]
+                'crm' => [
+                    'enabled' => false
                 ]
             ]
         ]);
@@ -49,15 +39,17 @@ class TestSiteSeeder extends Seeder
                 'type' => 'text',
                 'required' => true,
                 'placeholder' => 'Введите ваше имя',
-                'order' => 1
+                'order' => 1,
+                'is_active' => true
             ],
             [
                 'name' => 'phone',
                 'label' => 'Телефон',
                 'type' => 'phone',
                 'required' => true,
-                'placeholder' => '+7 (___) ___-__-__',
-                'order' => 2
+                'placeholder' => '+7 (999) 123-45-67',
+                'order' => 2,
+                'is_active' => true
             ],
             [
                 'name' => 'email',
@@ -65,32 +57,8 @@ class TestSiteSeeder extends Seeder
                 'type' => 'email',
                 'required' => false,
                 'placeholder' => 'example@mail.com',
-                'order' => 3
-            ],
-            [
-                'name' => 'service',
-                'label' => 'Выберите услугу',
-                'type' => 'select',
-                'required' => true,
-                'options' => [
-                    ['value' => 'web', 'label' => 'Создание сайта'],
-                    ['value' => 'seo', 'label' => 'SEO продвижение'],
-                    ['value' => 'design', 'label' => 'Дизайн'],
-                    ['value' => 'ads', 'label' => 'Контекстная реклама']
-                ],
-                'order' => 4
-            ],
-            [
-                'name' => 'urgency',
-                'label' => 'Срочность',
-                'type' => 'radio',
-                'required' => true,
-                'options' => [
-                    ['value' => 'high', 'label' => 'Срочно'],
-                    ['value' => 'medium', 'label' => 'Средняя'],
-                    ['value' => 'low', 'label' => 'Не срочно']
-                ],
-                'order' => 5
+                'order' => 3,
+                'is_active' => true
             ],
             [
                 'name' => 'comment',
@@ -98,7 +66,8 @@ class TestSiteSeeder extends Seeder
                 'type' => 'textarea',
                 'required' => false,
                 'placeholder' => 'Опишите вашу задачу',
-                'order' => 6
+                'order' => 4,
+                'is_active' => true
             ]
         ];
         
@@ -107,6 +76,5 @@ class TestSiteSeeder extends Seeder
         }
         
         $this->command->info('Тестовый сайт создан: test.local');
-        $this->command->info('API ключ: ' . $site->api_key);
     }
 }

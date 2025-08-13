@@ -65,6 +65,18 @@
                         </td>
                     </tr>
                     <tr>
+                        <td><strong>Пользователь:</strong></td>
+                        <td>
+                            @if($request->user)
+                                <span class="badge bg-info">{{ $request->user->name }}</span>
+                                <br>
+                                <small class="text-muted">{{ $request->user->getDisplayName() }}</small>
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
                         <td><strong>Источник:</strong></td>
                         <td>
                             <span class="badge bg-info">{{ $request->getSource() }}</span>

@@ -81,6 +81,19 @@
                     <li><code>{form_data}</code> - все данные формы (JSON)</li>
                 </ul>
                 
+                <h6>Данные пользователя:</h6>
+                <ul class="list-unstyled small">
+                    <li><code>{user_id}</code> - ID пользователя</li>
+                    <li><code>{user_name}</code> - полное имя пользователя</li>
+                    <li><code>{user_email}</code> - email пользователя</li>
+                    <li><code>{user_username}</code> - логин пользователя</li>
+                    <li><code>{user_display_name}</code> - отображаемое имя (логин или email)</li>
+                    <li><code>{user_is_admin}</code> - является ли администратором (Да/Нет)</li>
+                    <li><code>{user_first_name}</code> - имя пользователя</li>
+                    <li><code>{user_last_name}</code> - фамилия пользователя</li>
+                    <li><code>{user_middle_name}</code> - отчество пользователя</li>
+                </ul>
+                
                 <h6>Поля формы сайта:</h6>
                 @if($fields->count() > 0)
                     <ul class="list-unstyled small">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Site;
+use Illuminate\Support\Facades\Auth;
 
 class DomainController extends Controller
 {
@@ -25,13 +26,27 @@ class DomainController extends Controller
         // Ищем сайт по домену
         $site = Site::where('domain', $host)->where('is_active', true)->first();
         
-        if ($site) {
-            // Если найден активный сайт, показываем форму
-            $fields = $site->activeFields()->get();
-            return view('form', compact('site', 'fields'));
+        if (!$site) {
+            abort(404, 'Сайт не найден');
         }
         
-        // Если сайт не найден, показываем 404
-        abort(404, 'Сайт не найден');
+        // Проверяем авторизацию
+        if (!Auth::check()) {
+            return redirect()->route('site.login');
+        }
+        
+        $user = Auth::user();
+        
+        // Проверяем доступ к сайту
+        if (!$user->isAdmin() && !$user->hasAccessToSite($site->id)) {
+            Auth::logout();
+            return redirect()->route('site.login')->withErrors([
+                'email' => 'У вас нет доступа к этому сайту.',
+            ]);
+        }
+        
+        // Если все проверки пройдены, показываем форму
+        $fields = $site->activeFields()->get();
+        return view('form', compact('site', 'fields'));
     }
 }

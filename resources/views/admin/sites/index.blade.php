@@ -84,8 +84,18 @@
                 </table>
             </div>
             
-            <div class="d-flex justify-content-center mt-4">
-                {{ $sites->links() }}
+            <!-- Информация о пагинации -->
+            <div class="pagination-info">
+                <i class="bi bi-info-circle me-2"></i>
+                Показано {{ $sites->firstItem() ?? 0 }} - {{ $sites->lastItem() ?? 0 }} из {{ $sites->total() }} сайтов
+                @if($sites->hasPages())
+                    (страница {{ $sites->currentPage() }} из {{ $sites->lastPage() }})
+                @endif
+            </div>
+            
+            <!-- Пагинация -->
+            <div class="d-flex justify-content-center mt-3">
+                {{ $sites->appends(request()->query())->links('pagination::bootstrap-5') }}
             </div>
         @else
             <div class="text-center py-5">

@@ -19,6 +19,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
         'is_admin',
@@ -54,5 +55,63 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return $this->is_admin;
+    }
+    
+    /**
+     * Отношение к сайтам через промежуточную таблицу
+     */
+    public function sites()
+    {
+        return $this->belongsToMany(Site::class, 'user_sites');
+    }
+    
+    /**
+     * Проверить, имеет ли пользователь доступ к сайту
+     */
+    public function hasAccessToSite($siteId)
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+        
+        return $this->sites()->where('site_id', $siteId)->exists();
+    }
+    
+    /**
+     * Получить все сайты, к которым у пользователя есть доступ
+     */
+    public function getAccessibleSites()
+    {
+        if ($this->isAdmin()) {
+            return Site::all();
+        }
+        
+        return $this->sites;
+    }
+    
+    /**
+     * Найти пользователя по username или email
+     */
+    public static function findByUsernameOrEmail($value)
+    {
+        return static::where('username', $value)
+            ->orWhere('email', $value)
+            ->first();
+    }
+    
+    /**
+     * Получить отображаемое имя (username или email)
+     */
+    public function getDisplayName()
+    {
+        return $this->username ?: $this->email;
+    }
+    
+    /**
+     * Отношение к заявкам
+     */
+    public function formRequests()
+    {
+        return $this->hasMany(FormRequest::class);
     }
 }

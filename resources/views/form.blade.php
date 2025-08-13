@@ -8,6 +8,8 @@
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     
     <style>
         body {
@@ -64,6 +66,36 @@
                     <div class="text-center mb-4">
                         <h2 class="form-title">{{ $site->name }}</h2>
                         <p class="text-muted">Оставьте заявку и мы свяжемся с вами</p>
+                        
+                        @auth
+                            <div class="mt-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="text-start">
+                                        <small class="text-muted">
+                                            <i class="bi bi-person me-1"></i>
+                                            {{ auth()->user()->name }}
+                                            @if(auth()->user()->username)
+                                                <span class="text-muted">({{ auth()->user()->username }})</span>
+                                            @endif
+                                            @if(auth()->user()->is_admin)
+                                                <span class="badge bg-danger ms-1">Админ</span>
+                                            @endif
+                                        </small>
+                                    </div>
+                                    <div>
+                                        <a href="{{ route('site.profile') }}" class="btn btn-sm btn-outline-primary me-2">
+                                            <i class="bi bi-person-circle me-1"></i>Профиль
+                                        </a>
+                                        <form method="POST" action="{{ route('site.logout') }}" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-box-arrow-right me-1"></i>Выйти
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        @endauth
                     </div>
                     
                     @if(session('success'))

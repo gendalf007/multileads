@@ -8,6 +8,7 @@ class FormRequest extends Model
 {
     protected $fillable = [
         'site_id', 
+        'user_id',
         'form_data', 
         'source', 
         'ip_address', 
@@ -24,6 +25,14 @@ class FormRequest extends Model
     public function site()
     {
         return $this->belongsTo(Site::class);
+    }
+    
+    /**
+     * Отношение к пользователю
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
     
     /**

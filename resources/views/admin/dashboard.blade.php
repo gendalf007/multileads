@@ -87,7 +87,32 @@
                 @endif
             </div>
         </div>
+
+            <!-- Топ пользователей -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">Топ пользователей по заявкам</h5>
+            </div>
+            <div class="card-body">
+                @if($topUsers->count() > 0)
+                    @foreach($topUsers as $user)
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <strong>{{ $user->name }}</strong>
+                                <br>
+                                <small class="text-muted">{{ $user->getDisplayName() }}</small>
+                            </div>
+                            <span class="badge bg-success">{{ $user->form_requests_count }}</span>
+                        </div>
+                    @endforeach
+                @else
+                    <p class="text-muted">Нет данных</p>
+                @endif
+            </div>
+        </div>
+
     </div>
+    
 </div>
 
 <!-- Последние заявки -->
@@ -106,6 +131,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Сайт</th>
+                                    <th>Пользователь</th>
                                     <th>Имя</th>
                                     <th>Телефон</th>
                                     <th>Источник</th>
@@ -120,6 +146,13 @@
                                         <td>
                                             @if($request->site)
                                                 <span class="badge bg-secondary">{{ $request->site->name }}</span>
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($request->user)
+                                                <span class="badge bg-info">{{ $request->user->name }}</span>
                                             @else
                                                 <span class="text-muted">-</span>
                                             @endif

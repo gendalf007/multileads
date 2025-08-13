@@ -34,6 +34,7 @@ class ApiController extends Controller
         // Сохранение заявки
         $formRequest = FormRequest::create([
             'site_id' => $site->id,
+            'user_id' => auth()->id(), // Добавляем ID авторизованного пользователя
             'form_data' => $validated,
             'source' => $request->source ?? 'api',
             'ip_address' => $request->ip(),
@@ -119,13 +120,23 @@ class ApiController extends Controller
             // Подготавливаем данные для CRM на основе маппинга
             $crmData = $this->prepareCrmData($formData, $formRequest, $site);
             
+            // Логируем данные, которые будут отправлены в CRM
+            \Log::info('CRM API request (API)', [
+                'site_id' => $site->id,
+                'request_id' => $formRequest->id,
+                'user_id' => $formRequest->user_id,
+                'crm_url' => $site->getCrmApiUrl(),
+                'sent_data' => $crmData
+            ]);
+            
+            // Отправляем запрос в CRM (раскомментировать когда будет настроен CRM)
             $response = Http::withHeaders([
                 'Authorization' => $site->getCrmApiKey(),
                 'Content-Type' => 'application/json'
             ])->post($site->getCrmApiUrl(), $crmData);
             
-            // Логирование результата
-            \Log::info('CRM API response', [
+            // Логирование результата ответа (раскомментировать когда будет настроен CRM)
+            \Log::info('CRM API response (API)', [
                 'site_id' => $site->id,
                 'request_id' => $formRequest->id,
                 'status' => $response->status(),
@@ -134,10 +145,11 @@ class ApiController extends Controller
             ]);
             
         } catch (\Exception $e) {
-            \Log::error('CRM API error', [
+            \Log::error('CRM API error (API)', [
                 'site_id' => $site->id,
                 'request_id' => $formRequest->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
         }
     }

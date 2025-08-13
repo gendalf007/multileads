@@ -20,7 +20,7 @@ class DashboardController extends Controller
         $recentRequests = FormRequest::where('created_at', '>=', now()->subDays(30))->count();
         
         // Последние заявки
-        $latestRequests = FormRequest::with('site')
+        $latestRequests = FormRequest::with(['site', 'user'])
             ->latest()
             ->take(10)
             ->get();
@@ -28,6 +28,13 @@ class DashboardController extends Controller
         // Топ сайтов по заявкам
         $topSites = Site::withCount('requests')
             ->orderBy('requests_count', 'desc')
+            ->take(5)
+            ->get();
+        
+        // Топ пользователей по заявкам
+        $topUsers = \App\Models\User::withCount('formRequests')
+            ->having('form_requests_count', '>', 0)
+            ->orderBy('form_requests_count', 'desc')
             ->take(5)
             ->get();
         
@@ -49,6 +56,7 @@ class DashboardController extends Controller
             'recentRequests',
             'latestRequests',
             'topSites',
+            'topUsers',
             'dailyStats'
         ));
     }

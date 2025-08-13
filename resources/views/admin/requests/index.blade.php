@@ -30,6 +30,18 @@
             </div>
             
             <div class="col-md-2">
+                <label for="user_id" class="form-label">Пользователь</label>
+                <select class="form-select" id="user_id" name="user_id">
+                    <option value="">Все пользователи</option>
+                    @foreach(\App\Models\User::all() as $user)
+                        <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
+                            {{ $user->name }} ({{ $user->getDisplayName() }})
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            
+            <div class="col-md-2">
                 <label for="date_from" class="form-label">Дата с</label>
                 <input type="date" class="form-control" id="date_from" name="date_from" 
                        value="{{ request('date_from') }}">
@@ -63,6 +75,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Сайт</th>
+                            <th>Пользователь</th>
                             <th>Имя</th>
                             <th>Телефон</th>
                             <th>Email</th>
@@ -79,6 +92,13 @@
                                 <td>
                                     @if($request->site)
                                         <span class="badge bg-secondary">{{ $request->site->name }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($request->user)
+                                        <span class="badge bg-info">{{ $request->user->getDisplayName() }}</span>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
@@ -107,8 +127,18 @@
                 </table>
             </div>
             
-            <div class="d-flex justify-content-center mt-4">
-                {{ $requests->links() }}
+            <!-- Информация о пагинации -->
+            <div class="pagination-info">
+                <i class="bi bi-info-circle me-2"></i>
+                Показано {{ $requests->firstItem() ?? 0 }} - {{ $requests->lastItem() ?? 0 }} из {{ $requests->total() }} заявок
+                @if($requests->hasPages())
+                    (страница {{ $requests->currentPage() }} из {{ $requests->lastPage() }})
+                @endif
+            </div>
+            
+            <!-- Пагинация -->
+            <div class="d-flex justify-content-center mt-3">
+                {{ $requests->appends(request()->query())->links('pagination::bootstrap-5') }}
             </div>
         @else
             <div class="text-center py-5">

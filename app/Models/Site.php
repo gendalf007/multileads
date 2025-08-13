@@ -150,4 +150,20 @@ class Site extends Model
     {
         return $this->getCrmSettings()['entry_point'] ?? config('app.crm_api_entry_point');
     }
+    
+    /**
+     * Отношение к пользователям через промежуточную таблицу
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_sites');
+    }
+    
+    /**
+     * Получить пользователей с доступом к сайту
+     */
+    public function getAccessibleUsers()
+    {
+        return $this->users;
+    }
 }

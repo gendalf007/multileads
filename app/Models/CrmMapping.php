@@ -126,6 +126,34 @@ class CrmMapping extends Model
             }
         }
         
+        // Добавляем данные пользователя, если заявка привязана к пользователю
+        if ($formRequest->user) {
+            $user = $formRequest->user;
+            $replacements['{user_id}'] = $user->id;
+            $replacements['{user_name}'] = $user->name;
+            $replacements['{user_email}'] = $user->email;
+            $replacements['{user_username}'] = $user->username ?? '';
+            $replacements['{user_display_name}'] = $user->getDisplayName();
+            $replacements['{user_is_admin}'] = $user->isAdmin() ? 'Да' : 'Нет';
+            
+            // Разделение имени пользователя
+            $userNameParts = explode(' ', trim($user->name));
+            $replacements['{user_first_name}'] = $userNameParts[0] ?? '';
+            $replacements['{user_last_name}'] = $userNameParts[1] ?? '';
+            $replacements['{user_middle_name}'] = $userNameParts[2] ?? '';
+        } else {
+            // Если пользователь не привязан, устанавливаем пустые значения
+            $replacements['{user_id}'] = '';
+            $replacements['{user_name}'] = '';
+            $replacements['{user_email}'] = '';
+            $replacements['{user_username}'] = '';
+            $replacements['{user_display_name}'] = '';
+            $replacements['{user_is_admin}'] = '';
+            $replacements['{user_first_name}'] = '';
+            $replacements['{user_last_name}'] = '';
+            $replacements['{user_middle_name}'] = '';
+        }
+        
         return str_replace(array_keys($replacements), array_values($replacements), $template);
     }
 }

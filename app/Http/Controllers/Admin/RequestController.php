@@ -13,11 +13,16 @@ class RequestController extends Controller
      */
     public function index(Request $request)
     {
-        $query = FormRequest::with('site');
+        $query = FormRequest::with(['site', 'user']);
         
         // Фильтрация по сайту
         if ($request->filled('site_id')) {
             $query->where('site_id', $request->site_id);
+        }
+        
+        // Фильтрация по пользователю
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
         }
         
         // Фильтрация по дате
@@ -49,7 +54,7 @@ class RequestController extends Controller
      */
     public function show(FormRequest $request)
     {
-        $request->load('site');
+        $request->load(['site', 'user']);
         return view('admin.requests.show', compact('request'));
     }
 }
