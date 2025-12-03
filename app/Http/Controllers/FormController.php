@@ -55,6 +55,17 @@ class FormController extends Controller
         if (isset($validated['phone'])) {
             $validated['phone'] = $this->normalizePhone($validated['phone']);
         }
+
+        if (isset($validated['phone'])) {
+            $repatphone = FormRequest::where('site_id', $site->id)
+                ->where('form_data->phone', $validated['phone'])
+                ->where('created_at', '>', now()->subDays(2))
+                ->first();
+        
+            if ($repatphone) {
+                return redirect()->back()->with('error', 'Вы уже отправили заявку с этим номером телефона. Пожалуйста, подождите 2 дня перед отправкой новой заявки.');
+            }
+        }
         
         // Сохранение заявки
         $formRequest = FormRequest::create([

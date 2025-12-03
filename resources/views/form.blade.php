@@ -104,6 +104,14 @@
                             {{ session('success') }}
                         </div>
                     @endif
+
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     
                     @if($errors->any())
                         <div class="alert alert-danger">
@@ -226,7 +234,7 @@
                             </div>
                         @endforeach
                         
-                        <button type="submit" class="btn btn-primary w-100">
+                        <button type="submit" class="btn btn-primary w-100" id="submitBtn">
                             <i class="bi bi-send me-2"></i>Отправить заявку
                         </button>
                     </form>
@@ -250,6 +258,14 @@
             $('input[type="tel"]').mask('+7 (000) 000-00-00', {
                 placeholder: '+7 (___) ___-__-__'
             });
+
+
+            // Блокировка повторного нажатия на кнопку отправки
+            $('#leadForm').on('submit', function() {
+            $('#submitBtn').prop('disabled', true)
+                    .html('<span class="spinner-border spinner-border-sm me-2"></span>Отправка...');
+            });
+
             
             // Анимация появления формы
             $('.form-container').hide().fadeIn(800);
