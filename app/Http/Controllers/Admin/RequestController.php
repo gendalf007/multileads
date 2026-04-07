@@ -27,11 +27,28 @@ class RequestController extends Controller
         
         // Фильтрация по дате
         if ($request->filled('date_from')) {
-            $query->whereDate('created_at', '>=', $request->date_from);
+            if ($request->filled('time_from')) {
+                $query->where('created_at', '>=', $request->date_from . ' ' . $request->time_from . ':00');
+            } else {
+                $query->whereDate('created_at', '>=', $request->date_from);
+            }
         }
-        
+
         if ($request->filled('date_to')) {
-            $query->whereDate('created_at', '<=', $request->date_to);
+            if ($request->filled('time_to')) {
+                $query->where('created_at', '<=', $request->date_to . ' ' . $request->time_to . ':59');
+            } else {
+                $query->whereDate('created_at', '<=', $request->date_to);
+            }
+        }
+
+        // Фильтрация по времени суток (без даты)
+        if (!$request->filled('date_from') && $request->filled('time_from')) {
+            $query->whereTime('created_at', '>=', $request->time_from);
+        }
+
+        if (!$request->filled('date_to') && $request->filled('time_to')) {
+            $query->whereTime('created_at', '<=', $request->time_to);
         }
         
         // Поиск
@@ -47,6 +64,39 @@ class RequestController extends Controller
         $requests = $query->latest()->paginate(20);
         
         return view('admin.requests.index', compact('requests'));
+    }
+
+    /**
+     * Массовая повторная отправка заявок в CRM
+     */
+    public function bulkSend(Request $request)
+    {
+        $ids = (array) $request->input('ids', []);
+
+        if (empty($ids)) {
+            return back()->with('error', 'Не выбрано ни одной заявки');
+        }
+
+        $requests = FormRequest::with('site')->whereIn('id', $ids)->get();
+        $form = app(\App\Http\Controllers\FormController::class);
+        $sent = 0;
+        $skipped = 0;
+
+        foreach ($requests as $r) {
+            if (!($r->site->getCrmSettings()['enabled'] ?? false)) {
+                $skipped++;
+                continue;
+            }
+            $form->sendToCrm($r, $r->site);
+            $sent++;
+        }
+
+        $msg = "Отправлено заявок: {$sent}";
+        if ($skipped > 0) {
+            $msg .= ". Пропущено (CRM выключен): {$skipped}";
+        }
+
+        return back()->with('success', $msg);
     }
 
     /**

@@ -144,7 +144,7 @@ class FormController extends Controller
     /**
      * Отправка в CRM
      */
-    private function sendToCrm($formRequest, $site)
+    public function sendToCrm($formRequest, $site)
     {
         try {
             $formData = $formRequest->getFormData();
@@ -181,7 +181,7 @@ class FormController extends Controller
     /**
      * Подготовка данных для CRM на основе маппинга из БД
      */
-    private function prepareCrmData($formData, $formRequest, $site)
+    public function prepareCrmData($formData, $formRequest, $site)
     {
         // Получаем данные из БД
         $crmData = $site->getCrmData($formData, $formRequest);

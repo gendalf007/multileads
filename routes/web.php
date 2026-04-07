@@ -49,6 +49,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     // Просмотр заявок
     Route::get('requests', [RequestController::class, 'index'])->name('requests.index');
+    Route::post('requests/bulk-send', [RequestController::class, 'bulkSend'])->name('requests.bulk-send');
     Route::get('requests/{request}', [RequestController::class, 'show'])->name('requests.show');
     
     // CRM маппинг

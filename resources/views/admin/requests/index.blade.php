@@ -43,14 +43,26 @@
             
             <div class="col-md-2">
                 <label for="date_from" class="form-label">Дата с</label>
-                <input type="date" class="form-control" id="date_from" name="date_from" 
+                <input type="date" class="form-control" id="date_from" name="date_from"
                        value="{{ request('date_from') }}">
             </div>
-            
+
+            <div class="col-md-2">
+                <label for="time_from" class="form-label">Время с</label>
+                <input type="time" class="form-control" id="time_from" name="time_from"
+                       value="{{ request('time_from') }}">
+            </div>
+
             <div class="col-md-2">
                 <label for="date_to" class="form-label">Дата по</label>
-                <input type="date" class="form-control" id="date_to" name="date_to" 
+                <input type="date" class="form-control" id="date_to" name="date_to"
                        value="{{ request('date_to') }}">
+            </div>
+
+            <div class="col-md-2">
+                <label for="time_to" class="form-label">Время по</label>
+                <input type="time" class="form-control" id="time_to" name="time_to"
+                       value="{{ request('time_to') }}">
             </div>
             
             <div class="col-md-3 d-flex align-items-end">
@@ -69,10 +81,21 @@
 <div class="card">
     <div class="card-body">
         @if($requests->count() > 0)
+            <form method="POST" action="{{ route('admin.requests.bulk-send') }}"
+                  onsubmit="return confirm('Переотправить выбранные заявки в CRM?')">
+                @csrf
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-send me-2"></i>Отправить выбранные в CRM
+                    </button>
+                </div>
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th style="width: 30px;">
+                                <input type="checkbox" id="check-all" class="form-check-input">
+                            </th>
                             <th>ID</th>
                             <th>Сайт</th>
                             <th>Пользователь</th>
@@ -88,6 +111,9 @@
                     <tbody>
                         @foreach($requests as $request)
                             <tr>
+                                <td>
+                                    <input type="checkbox" name="ids[]" value="{{ $request->id }}" class="form-check-input row-check">
+                                </td>
                                 <td>#{{ $request->id }}</td>
                                 <td>
                                     @if($request->site)
@@ -126,7 +152,13 @@
                     </tbody>
                 </table>
             </div>
-            
+            </form>
+            <script>
+                document.getElementById('check-all')?.addEventListener('change', function(e) {
+                    document.querySelectorAll('.row-check').forEach(cb => cb.checked = e.target.checked);
+                });
+            </script>
+
             <!-- Информация о пагинации -->
             <div class="pagination-info">
                 <i class="bi bi-info-circle me-2"></i>
