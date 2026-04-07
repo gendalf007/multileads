@@ -65,6 +65,15 @@
                        value="{{ request('time_to') }}">
             </div>
             
+            <div class="col-md-2">
+                <label for="per_page" class="form-label">На странице</label>
+                <select class="form-select" id="per_page" name="per_page">
+                    @foreach([20, 50, 100, 200, 500] as $pp)
+                        <option value="{{ $pp }}" {{ (int) request('per_page', 20) === $pp ? 'selected' : '' }}>{{ $pp }}</option>
+                    @endforeach
+                </select>
+            </div>
+
             <div class="col-md-3 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary me-2">
                     <i class="bi bi-search me-2"></i>Фильтровать

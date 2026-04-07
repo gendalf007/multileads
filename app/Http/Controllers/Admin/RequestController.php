@@ -61,7 +61,12 @@ class RequestController extends Controller
             });
         }
         
-        $requests = $query->latest()->paginate(20);
+        $perPage = (int) $request->input('per_page', 20);
+        if (!in_array($perPage, [20, 50, 100, 200, 500])) {
+            $perPage = 20;
+        }
+
+        $requests = $query->latest()->paginate($perPage)->appends($request->query());
         
         return view('admin.requests.index', compact('requests'));
     }
