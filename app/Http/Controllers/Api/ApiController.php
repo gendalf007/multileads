@@ -45,7 +45,12 @@ class ApiController extends Controller
         if ($site->getCrmSettings()['enabled'] ?? false) {
             $this->sendToCrm($formRequest, $site);
         }
-        
+
+        // Отдельная интеграция crmnew (через очередь)
+        if ($site->getCrmNewSettings()['enabled'] ?? false) {
+            \App\Jobs\SendLeadToCrmNew::dispatch($formRequest->id);
+        }
+
         return response()->json([
             'success' => true,
             'id' => $formRequest->id,

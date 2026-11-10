@@ -81,7 +81,12 @@ class FormController extends Controller
         if ($site->getCrmSettings()['enabled'] ?? false) {
             $this->sendToCrm($formRequest, $site);
         }
-        
+
+        // Отдельная интеграция crmnew (через очередь)
+        if ($site->getCrmNewSettings()['enabled'] ?? false) {
+            \App\Jobs\SendLeadToCrmNew::dispatch($formRequest->id);
+        }
+
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,

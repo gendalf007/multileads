@@ -63,7 +63,15 @@ class Site extends Model
     {
         return $this->settings['crm'] ?? [];
     }
-    
+
+    /**
+     * Получить настройки интеграции crmnew (Contractor API)
+     */
+    public function getCrmNewSettings()
+    {
+        return $this->settings['crmnew'] ?? [];
+    }
+
     /**
      * Получить настройки дизайна
      */

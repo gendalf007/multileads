@@ -113,6 +113,57 @@
                 </table>
             </div>
         </div>
+
+        <!-- Интеграция crmnew -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Интеграция crmnew</h5>
+                <a href="{{ route('admin.sites.crmnew.index', $site) }}" class="btn btn-sm btn-outline-info">
+                    <i class="bi bi-gear me-1"></i>Настройки
+                </a>
+            </div>
+            <div class="card-body">
+                @php $crmNewSettings = $site->getCrmNewSettings() @endphp
+                <table class="table table-borderless">
+                    <tr>
+                        <td><strong>Отправка:</strong></td>
+                        <td>
+                            @if($crmNewSettings['enabled'] ?? false)
+                                <span class="badge bg-success">Включена</span>
+                            @else
+                                <span class="badge bg-secondary">Выключена</span>
+                            @endif
+                        </td>
+                    </tr>
+                    @if($crmNewSettings['source_id'] ?? false)
+                        <tr>
+                            <td><strong>source_id:</strong></td>
+                            <td><code>{{ $crmNewSettings['source_id'] }}</code></td>
+                        </tr>
+                    @endif
+                    <tr>
+                        <td><strong>Токен:</strong></td>
+                        <td>
+                            @if($crmNewSettings['api_token'] ?? false)
+                                <span class="badge bg-success">свой</span>
+                            @else
+                                <span class="badge bg-secondary">глобальный</span>
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Маппинг полей:</strong></td>
+                        <td>
+                            @if(!empty($crmNewSettings['mapping']))
+                                <span class="badge bg-success">{{ count($crmNewSettings['mapping']) }} полей</span>
+                            @else
+                                <span class="badge bg-secondary">Автоматический</span>
+                            @endif
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
 
     <!-- Статистика -->

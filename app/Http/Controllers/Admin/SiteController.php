@@ -54,27 +54,7 @@ class SiteController extends Controller
             'domain' => $request->domain,
             'api_key' => Str::random(64),
             'is_active' => $request->boolean('is_active', true),
-            'settings' => [
-                'crm' => [
-                    'api_url' => $request->input('crm.api_url'),
-                    'api_key' => $request->input('crm.api_key'),
-                    'entry_point' => $request->input('crm.entry_point', 'website_form'),
-                    'entry_point_template' => $request->input('crm.entry_point_template', '{site_entry_point} {operator_name}'),
-                    'enabled' => $request->boolean('crm.enabled', false),
-                    'mapping' => $crmMapping
-                ],
-                'design' => [
-                    'primary_color' => $request->input('design.primary_color', '#667eea'),
-                    'secondary_color' => $request->input('design.secondary_color', '#764ba2'),
-                    'button_style' => $request->input('design.button_style', 'gradient')
-                ],
-                'notifications' => [
-                    'email' => [
-                        'enabled' => $request->boolean('notifications.email.enabled', false),
-                        'recipients' => array_filter(explode(',', $request->input('notifications.email.recipients', '')))
-                    ]
-                ]
-            ]
+            'settings' => $this->buildSettings($request, [], $crmMapping),
         ]);
 
         return redirect()->route('admin.sites.index')
@@ -135,31 +115,42 @@ class SiteController extends Controller
             'name' => $request->name,
             'domain' => $request->domain,
             'is_active' => $request->boolean('is_active', true),
-            'settings' => [
-                'crm' => [
-                    'api_url' => $request->input('crm.api_url'),
-                    'api_key' => $request->input('crm.api_key'),
-                    'entry_point' => $request->input('crm.entry_point', 'website_form'),
-                    'entry_point_template' => $request->input('crm.entry_point_template', '{site_entry_point} {operator_name}'),
-                    'enabled' => $request->boolean('crm.enabled', false),
-                    'mapping' => $crmMapping
-                ],
-                'design' => [
-                    'primary_color' => $request->input('design.primary_color', '#667eea'),
-                    'secondary_color' => $request->input('design.secondary_color', '#764ba2'),
-                    'button_style' => $request->input('design.button_style', 'gradient')
-                ],
-                'notifications' => [
-                    'email' => [
-                        'enabled' => $request->boolean('notifications.email.enabled', false),
-                        'recipients' => array_filter(explode(',', $request->input('notifications.email.recipients', '')))
-                    ]
-                ]
-            ]
+            'settings' => $this->buildSettings($request, $site->settings ?? [], $crmMapping),
         ]);
 
         return redirect()->route('admin.sites.index')
             ->with('success', 'Сайт успешно обновлен');
+    }
+
+    /**
+     * Собрать массив settings, сохраняя ключи, которыми форма сайта не управляет
+     * (например, settings.crmnew настраивается на отдельной странице).
+     */
+    private function buildSettings(Request $request, array $existing, array $crmMapping): array
+    {
+        $existing['crm'] = [
+            'api_url' => $request->input('crm.api_url'),
+            'api_key' => $request->input('crm.api_key'),
+            'entry_point' => $request->input('crm.entry_point', 'website_form'),
+            'entry_point_template' => $request->input('crm.entry_point_template', '{site_entry_point} {operator_name}'),
+            'enabled' => $request->boolean('crm.enabled', false),
+            'mapping' => $crmMapping,
+        ];
+
+        $existing['design'] = [
+            'primary_color' => $request->input('design.primary_color', '#667eea'),
+            'secondary_color' => $request->input('design.secondary_color', '#764ba2'),
+            'button_style' => $request->input('design.button_style', 'gradient'),
+        ];
+
+        $existing['notifications'] = [
+            'email' => [
+                'enabled' => $request->boolean('notifications.email.enabled', false),
+                'recipients' => array_filter(explode(',', $request->input('notifications.email.recipients', ''))),
+            ],
+        ];
+
+        return $existing;
     }
 
     /**

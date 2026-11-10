@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\SiteController;
 use App\Http\Controllers\Admin\FormFieldController;
 use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\Admin\CrmMappingController;
+use App\Http\Controllers\Admin\CrmNewSettingController;
 use App\Http\Controllers\Admin\UserController;
 
 
@@ -55,6 +56,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // CRM маппинг
     Route::get('sites/{site}/crm-mapping', [CrmMappingController::class, 'index'])->name('sites.crm-mapping.index');
     Route::post('sites/{site}/crm-mapping', [CrmMappingController::class, 'store'])->name('sites.crm-mapping.store');
+
+    // Интеграция crmnew
+    Route::get('sites/{site}/crmnew', [CrmNewSettingController::class, 'index'])->name('sites.crmnew.index');
+    Route::post('sites/{site}/crmnew', [CrmNewSettingController::class, 'store'])->name('sites.crmnew.store');
 });
 
 // API для получения конфигурации сайта

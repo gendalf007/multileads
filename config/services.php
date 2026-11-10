@@ -35,4 +35,16 @@ return [
         ],
     ],
 
+    /*
+    | crmnew — отдельная интеграция отправки заявок в Contractor API
+    | (POST {base_url}/api/contractor/applications, Bearer-токен подрядчика).
+    | Токен и source_id можно переопределить по сайту в settings.crmnew.
+    */
+    'crmnew' => [
+        'base_url' => env('CRMNEW_BASE_URL', 'http://crmnew.test'),
+        'token' => env('CRMNEW_API_TOKEN'),
+        'timeout' => (int) env('CRMNEW_TIMEOUT', 15),
+        'entry_point' => env('CRMNEW_ENTRY_POINT', 'lead-form'),
+    ],
+
 ];
